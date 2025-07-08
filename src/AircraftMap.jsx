@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './index.css';  // стили для иконок
 
-const AircraftMap = ({ feedUrl }) => {
+const AircraftMap = ({ feedUrl, onSelectAircraft }) => {
   const [aircraft, setAircraft] = useState([]);
 
   useEffect(() => {
@@ -50,6 +50,9 @@ const AircraftMap = ({ feedUrl }) => {
             key={id}
             position={[latitude, longitude]}
             icon={planeIcon}
+            eventHandlers={{
+              click: () => onSelectAircraft && onSelectAircraft(ac)
+            }}
           >
             <Popup>
               <div>

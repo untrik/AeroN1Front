@@ -1,0 +1,52 @@
+.aircraft-info-card {
+  position: fixed;
+  top: 40px;
+  right: 0;
+  width: 340px;
+  background: #fff;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+  padding: 24px 20px 20px 20px;
+  z-index: 1000;
+  border-radius: 8px 0 0 8px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  color: #222;
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    right: -400px;
+    opacity: 0;
+  }
+  to {
+    right: 0;
+    opacity: 1;
+  }
+}
+
+.aircraft-info-card h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.aircraft-info-card div {
+  margin-bottom: 8px;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #d00;
+}
