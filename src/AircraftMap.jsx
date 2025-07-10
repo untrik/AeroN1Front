@@ -13,6 +13,7 @@ const AircraftMap = ({ feedUrl, onSelectAircraft }) => {
         const res = await fetch(feedUrl);
         if (!res.ok) throw new Error(res.statusText);
         const data = await res.json();
+        console.log('Полученные данные:', data);
         setAircraft(data);
       } catch (err) {
         console.error('Ошибка получения данных:', err);
