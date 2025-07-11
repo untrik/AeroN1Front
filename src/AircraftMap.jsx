@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import './index.css';
 
 const API_KEY = 'e4a0ef61b8e93d598668e0b0129d683d';
+const OPENSKY_URL = 'http://localhost:8086/Feed/AircraftList.json';
 const BASE_URL = 'http://localhost:8086/api/aviationstack/';
 
 const AircraftMap = ({ apiType, onSelectAircraft }) => {
@@ -17,7 +18,12 @@ const AircraftMap = ({ apiType, onSelectAircraft }) => {
       setLoading(true);
       setError(null);
       try {
-        const url = `${BASE_URL}${apiType}`;
+        let url;
+        if (apiType === 'opensky') {
+          url = OPENSKY_URL;
+        } else {
+          url = `${BASE_URL}${apiType}`;
+        }
         const res = await fetch(url);
         const text = await res.text();
         let json;
@@ -30,7 +36,12 @@ const AircraftMap = ({ apiType, onSelectAircraft }) => {
           setData([]);
           return;
         }
-        setData(json.data || []);
+        // Для opensky ожидаем массив, для aviationstack — объект с data
+        if (apiType === 'opensky') {
+          setData(Array.isArray(json) ? json : (json.aircraft || []));
+        } else {
+          setData(json.data || []);
+        }
       } catch (err) {
         setError('Ошибка загрузки данных: ' + err.message);
         setData([]);
@@ -41,8 +52,13 @@ const AircraftMap = ({ apiType, onSelectAircraft }) => {
     fetchData();
   }, [apiType]);
 
-  // Только для flights отображаем карту
-  if (apiType === 'flights') {
+  // Для opensky и flights отображаем карту
+  if (apiType === 'flights' || apiType === 'opensky') {
+    // Для opensky структура другая
+    const isOpenSky = apiType === 'opensky';
+    const aircraftList = isOpenSky
+      ? data.filter(ac => ac.latitude && ac.longitude)
+      : data.filter(f => f.live && f.live.latitude && f.live.longitude);
     return (
       <div style={{ position: 'relative', width: '100%', height: '100vh' }}>
         {loading && <div style={{position:'absolute',top:10,left:10,zIndex:1000,background:'#fff',padding:8,borderRadius:4}}>Загрузка...</div>}
@@ -52,21 +68,35 @@ const AircraftMap = ({ apiType, onSelectAircraft }) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution="&copy; OpenStreetMap contributors"
           />
-          {data.filter(f => f.live && f.live.latitude && f.live.longitude).map((f, idx) => {
-            const ac = f;
-            const lat = ac.live.latitude;
-            const lon = ac.live.longitude;
-            const callsign = ac.flight?.iata || ac.flight?.icao || ac.flight?.number || 'N/A';
-            const altitude = ac.live.altitude;
-            const speed = ac.live.speed_horizontal;
-            const track = ac.live.direction;
-            const id = ac.aircraft?.icao24 || ac.aircraft?.registration || idx;
-            const registration = ac.aircraft?.registration;
-            const originCountry = ac.departure?.airport;
-            const icao = ac.aircraft?.icao24;
-            const lastSeen = Date.parse(ac.live.updated)/1000;
-            const onGround = ac.live.is_ground;
-            // Для карточки:
+          {aircraftList.map((ac, idx) => {
+            let lat, lon, callsign, altitude, speed, track, id, registration, originCountry, icao, lastSeen, onGround;
+            if (isOpenSky) {
+              lat = ac.latitude;
+              lon = ac.longitude;
+              callsign = ac.callsign || 'N/A';
+              altitude = ac.altitude;
+              speed = ac.speed;
+              track = ac.track;
+              id = ac.icao || ac.id || idx;
+              registration = ac.registration;
+              originCountry = ac.originCountry;
+              icao = ac.icao;
+              lastSeen = ac.lastSeen;
+              onGround = ac.onGround;
+            } else {
+              lat = ac.live.latitude;
+              lon = ac.live.longitude;
+              callsign = ac.flight?.iata || ac.flight?.icao || ac.flight?.number || 'N/A';
+              altitude = ac.live.altitude;
+              speed = ac.live.speed_horizontal;
+              track = ac.live.direction;
+              id = ac.aircraft?.icao24 || ac.aircraft?.registration || idx;
+              registration = ac.aircraft?.registration;
+              originCountry = ac.departure?.airport;
+              icao = ac.aircraft?.icao24;
+              lastSeen = Date.parse(ac.live.updated)/1000;
+              onGround = ac.live.is_ground;
+            }
             const aircraftObj = {
               callsign,
               id,
@@ -81,7 +111,7 @@ const AircraftMap = ({ apiType, onSelectAircraft }) => {
               lastSeen,
               onGround
             };
-            const speedKmh = Math.round(speed);
+            const speedKmh = Math.round(speed * (isOpenSky ? 3.6 : 1));
             const planeIcon = L.divIcon({
               html: `<div class="plane-icon" style="transform: rotate(${track}deg); font-size: 36px;">✈️</div>`,
               className: '',

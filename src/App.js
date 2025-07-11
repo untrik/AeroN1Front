@@ -4,20 +4,21 @@ import AircraftInfoCard from "./AircraftInfoCard";
 import "leaflet/dist/leaflet.css";
 
 const API_OPTIONS = [
-  { value: "flights", label: "Рейсы (flights)" },
-  { value: "routes", label: "Маршруты (routes)" },
-  { value: "airports", label: "Аэропорты (airports)" },
-  { value: "airlines", label: "Авиакомпании (airlines)" },
-  { value: "airplanes", label: "Самолёты (airplanes)" },
-  { value: "aircraft_types", label: "Типы самолётов (aircraft_types)" },
-  { value: "taxes", label: "Авианалог (taxes)" },
-  { value: "cities", label: "Города (cities)" },
-  { value: "countries", label: "Страны (countries)" },
+  { value: "opensky", label: "OpenSky (локальный)" },
+  { value: "flights", label: "Рейсы (flights, aviationstack)" },
+  { value: "routes", label: "Маршруты (routes, aviationstack)" },
+  { value: "airports", label: "Аэропорты (airports, aviationstack)" },
+  { value: "airlines", label: "Авиакомпании (airlines, aviationstack)" },
+  { value: "airplanes", label: "Самолёты (airplanes, aviationstack)" },
+  { value: "aircraft_types", label: "Типы самолётов (aviationstack)" },
+  { value: "taxes", label: "Авианалог (aviationstack)" },
+  { value: "cities", label: "Города (aviationstack)" },
+  { value: "countries", label: "Страны (aviationstack)" },
 ];
 
 function App() {
   const [selectedAircraft, setSelectedAircraft] = useState(null);
-  const [apiType, setApiType] = useState("flights");
+  const [apiType, setApiType] = useState("opensky");
 
   return (
     <>
