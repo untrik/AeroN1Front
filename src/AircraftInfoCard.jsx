@@ -13,7 +13,7 @@ const AircraftInfoCard = ({ aircraft, onClose }) => {
     track,
     verticalRate,
     squawk,
-    icao24,
+    icao,
     registration,
     originCountry,
     lastSeen,
@@ -26,7 +26,7 @@ const AircraftInfoCard = ({ aircraft, onClose }) => {
       <h2>Информация о самолёте</h2>
       <div><b>Позывной:</b> {callsign || 'N/A'}</div>
       <div><b>Регистрация:</b> {registration || 'N/A'}</div>
-      <div><b>ICAO24:</b> {icao24 || id || 'N/A'}</div>
+      <div><b>ICAO24:</b> {icao || id || 'N/A'}</div>
       <div><b>Страна:</b> {originCountry || 'N/A'}</div>
       <div><b>Широта:</b> {latitude}</div>
       <div><b>Долгота:</b> {longitude}</div>
