@@ -11,6 +11,7 @@ function App() {
       <AircraftMap
         feedUrl="http://localhost:8086/Feed/AircraftList.json"
         onSelectAircraft={setSelectedAircraft}
+        selectedAircraft={selectedAircraft}
       />
       {selectedAircraft && (
         <AircraftInfoCard

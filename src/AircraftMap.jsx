@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, CircleMarker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './index.css';  // стили для иконок
 
-const AircraftMap = ({ feedUrl, onSelectAircraft }) => {
+const AircraftMap = ({ feedUrl, onSelectAircraft, selectedAircraft }) => {
   const [aircraft, setAircraft] = useState([]);
 
   useEffect(() => {
@@ -25,12 +25,44 @@ const AircraftMap = ({ feedUrl, onSelectAircraft }) => {
     return () => clearInterval(interval);
   }, [feedUrl]);
 
+  // Функция для объединения широт и долгот в массив точек [[lat, lon], ...]
+  const getFlightPath = (aircraft) => {
+    if (!aircraft?.latitudes || !aircraft?.longitudes || 
+        aircraft.latitudes.length !== aircraft.longitudes.length) {
+      return [];
+    }
+    return aircraft.latitudes.map((lat, i) => [lat, aircraft.longitudes[i]]);
+  };
+
   return (
     <MapContainer center={[55, 37]} zoom={5} style={{ height: '100vh', width: '100%' }}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="&copy; OpenStreetMap contributors"
       />
+
+      {/* Маршрут выбранного самолета */}
+      {selectedAircraft && getFlightPath(selectedAircraft).length > 0 && (
+        <>
+          <Polyline
+            positions={getFlightPath(selectedAircraft)}
+            color="red"
+            weight={2}
+            opacity={0.7}
+          />
+          {getFlightPath(selectedAircraft).map((pos, idx) => (
+            <CircleMarker
+              key={idx}
+              center={pos}
+              radius={3}
+              color="red"
+              fillOpacity={0.7}
+            />
+          ))}
+        </>
+      )}
+
+      
 
       {aircraft.map(ac => {
         const { id, latitude, longitude, callsign, altitude, speed, track } = ac;
