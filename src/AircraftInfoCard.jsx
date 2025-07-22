@@ -14,7 +14,6 @@ const AircraftInfoCard = ({ aircraft, onClose }) => {
     verticalRate,
     squawk,
     icao,
-    registration,
     originCountry,
     lastSeen,
     onGround
@@ -25,7 +24,6 @@ const AircraftInfoCard = ({ aircraft, onClose }) => {
       <button className="close-btn" onClick={onClose}>×</button>
       <h2>Информация о самолёте</h2>
       <div><b>Позывной:</b> {callsign || 'N/A'}</div>
-      <div><b>Регистрация:</b> {registration || 'N/A'}</div>
       <div><b>ICAO24:</b> {icao || id || 'N/A'}</div>
       <div><b>Страна:</b> {originCountry || 'N/A'}</div>
       <div><b>Широта:</b> {latitude}</div>
